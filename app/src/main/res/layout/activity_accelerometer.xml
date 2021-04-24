@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ConstraintLayout_acc"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    tools:context=".accelerometer">
+
+
+    <TextView
+        android:id="@+id/x_acc"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/x"
+        android:textColor="#FF7043"
+        app:layout_constraintBottom_toTopOf="@+id/y_acc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/y_acc"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/y"
+        android:textColor="#FF7043"
+        app:layout_constraintBottom_toTopOf="@+id/z_acc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/x_acc" />
+
+    <TextView
+        android:id="@+id/z_acc"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/z"
+        android:textColor="#FF7043"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/y_acc"
+        app:layout_constraintVertical_bias="0.28" />
+
+    <Button
+        android:id="@+id/home_acc"
+        android:layout_width="94dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="32dp"
+        android:onClick="goHome"
+        android:text="@string/home"
+        app:backgroundTint="#FF7043"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="134dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/start"
+        app:layout_constraintBottom_toTopOf="@+id/home_acc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:text="@string/accelerometer"
+        android:textColor="#29B6F6"
+        android:textSize="24sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

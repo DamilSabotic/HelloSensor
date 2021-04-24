@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">HelloSensor</string>
+    <string name="heading_0_0">Heading: 0.0</string>
+    <string name="compas_image">Compas image</string>
+    <string name="button">Button</string>
+    <string name="start_game">Start Game</string>
+    <string name="find_degree">Find Degree</string>
+    <string name="find_north">Find North</string>
+    <string name="toggle_game_to_play">Toggle game to play</string>
+    <string name="toggle_a_buton_to_start">Toggle a buton to start</string>
+    <string name="HelloSensor" />
+    <string name="accelerometer">Accelerometer</string>
+    <string name="compass">Compass</string>
+    <string name="hellosensor">HelloSensor</string>
+    <string name="accelerate">accelerate</string>
+    <string name="start">Start</string>
+    <string name="home">HOME</string>
+    <string name="z">Z:</string>
+    <string name="y">Y:</string>
+    <string name="x">X:</string>
+
 </resources>
