@@ -18,5 +18,22 @@
     <string name="z">Z:</string>
     <string name="y">Y:</string>
     <string name="x">X:</string>
+    <string name="max_acceleration">Max Acceleration:</string>
+    <string name="max_acceleration_x_axis">Max Acceleration: X-Axis</string>
+    <string name="x_0_0">0.0</string>
+    <string name="max_acceleration_y_axis">Max Acceleration: Y-Axis</string>
+    <string name="_0_0">0.0</string>
+    <string name="max_acceleration_z_axis">Max Acceleration: Z-Axis</string>
+    <string name="z_0_0">0.0</string>
+    <string name="y_axis">Y-Axis</string>
+    <string name="y_0_0">0.0</string>
+    <string name="current_acceleration">Current Acceleration:</string>
+    <string name="max_x">Max X</string>
+    <string name="textv">TextView</string>
+    <string name="textview">TextView</string>
+    <string name="current">Current:</string>
+    <string name="max_y">Max Y:</string>
+    <string name="maximim_x">Max X:</string>
+    <string name="maximum_z">Max Z:</string>
 
 </resources>

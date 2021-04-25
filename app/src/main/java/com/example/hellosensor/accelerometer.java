@@ -1,9 +1,6 @@
 package com.example.hellosensor;
 
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,25 +9,83 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.TextView;
 
 public class accelerometer extends Activity implements SensorEventListener{
+
+    private float lastX, lastY, lastZ;
+    TextView textView;
+    StringBuilder valueX = new StringBuilder();
+    StringBuilder valueY = new StringBuilder();
+
+    float [] history = new float[2];
+    String [] direction = {"NONE","NONE"};
+
     private SensorManager sensorManager;
-    private Sensor sensor;
-    private TextView xAcc;
-    private TextView yAcc;
-    private TextView zAcc;
+    private Sensor accelerometer;
+
+    private float deltaXMax = 0;
+    private float deltaYMax = 0;
+    private float deltaZMax = 0;
+
+    private float deltaX = 0;
+    private float deltaY = 0;
+    private float deltaZ = 0;
+
+    private float vibrateThreshold = 0;
+
+    private TextView currentX, currentY, currentZ, maxX, maxY, maxZ, directionX,directionY;
+
+    public Vibrator v;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accelerometer);
-        sensorManager = (android.hardware.SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        xAcc = (TextView) findViewById(R.id.x_acc);
-        yAcc = (TextView) findViewById(R.id.y_acc);
-        zAcc = (TextView) findViewById(R.id.z_acc);
+        currentX = (TextView) findViewById(R.id.currentX);
+        currentY = (TextView) findViewById(R.id.currentY);
+        currentZ = (TextView) findViewById(R.id.currentZ);
+        directionX = (TextView) findViewById(R.id.directionX);
+        directionY = (TextView) findViewById(R.id.directionY);
+
+        maxX = (TextView) findViewById(R.id.maxX);
+        maxY = (TextView) findViewById(R.id.maxY);
+        maxZ = (TextView) findViewById(R.id.maxZ);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            // success! we have an accelerometer
+
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            vibrateThreshold = accelerometer.getMaximumRange() / 2;
+        } else {
+            // fai! we dont have an accelerometer!
+        }
+
+        //initialize vibration
+        v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+
+    }
+
+
+    //onResume() register the accelerometer for listening the events
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    //onPause() unregister the accelerometer for stop listening the events
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     public void goHome(View view){
@@ -39,51 +94,86 @@ public class accelerometer extends Activity implements SensorEventListener{
         startActivity(intent);
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float xChange = history[0] - event.values[0];
+        float yChange = history[1] - event.values[1];
 
+        history[0] = event.values[0];
+        history[1] = event.values[1];
 
-        @Override
-        public void onSensorChanged(SensorEvent event){
-            // In this example, alpha is calculated as t / (t + dT),
-            // where t is the low-pass filter's time-constant and
-            // dT is the event delivery rate.
-
-            final float alpha = (float) 0.8;
-
-            // Isolate the force of gravity with the low-pass filter.
-            double[] gravity = new double[3];
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
-
-            // Remove the gravity contribution with the high-pass filter.
-            double[] linear_acceleration = new double[3];
-            linear_acceleration[0] = event.values[0] - gravity[0];
-            linear_acceleration[1] = event.values[1] - gravity[1];
-            linear_acceleration[2] = event.values[2] - gravity[2];
-            String x="X;";
-            String y="Y;";
-            String z="Z;";
-
-            xAcc.setText(x + Math.round(linear_acceleration[0]));
-            yAcc.setText(y +  Math.round(linear_acceleration[1]));
-            xAcc.setText(z +  Math.round(linear_acceleration[2]));
-
+        if (xChange > 2){
+            direction[0] = "LEFT";
+        }
+        else if (xChange < -2){
+            direction[0] = "RIGHT";
         }
 
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if (yChange > 2){
+            direction[1] = "DOWN";
+        }
+        else if (yChange < -2){
+            direction[1] = "UP";
+        }
+
+        valueX.setLength(0);
+        valueX.append("X: ");
+        valueX.append(direction[0]);
+        valueY.setLength(0);
+        valueY.append("Y : ");
+        valueY.append(direction[1]);
+
+        directionX.setText(valueX);
+        directionY.setText(valueY);
+        // clean current values
+        displayCleanValues();
+        // display the current x,y,z accelerometer values
+        displayCurrentValues();
+        // display the max x,y,z accelerometer values
+        displayMaxValues();
+
+        // get the change of the x,y,z values of the accelerometer
+        deltaX = Math.abs(lastX - event.values[0]);
+        deltaY = Math.abs(lastY - event.values[1]);
+        deltaZ = Math.abs(lastZ - event.values[2]);
+
+        // if the change is below 2, it is just plain noise
+        if (deltaX < 2)
+            deltaX = 0;
+        if (deltaY < 2)
+            deltaY = 0;
+        if ((deltaZ > vibrateThreshold) || (deltaY > vibrateThreshold) || (deltaZ > vibrateThreshold)) {
+            v.vibrate(50);
+        }
     }
 
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
+    public void displayCleanValues() {
+        currentX.setText("0.0");
+        currentY.setText("0.0");
+        currentZ.setText("0.0");
     }
 
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    // display the current x,y,z accelerometer values
+    public void displayCurrentValues() {
+        currentX.setText(Float.toString(deltaX));
+        currentY.setText(Float.toString(deltaY));
+        currentZ.setText(Float.toString(deltaZ));
     }
 
 
-
-
+    // display the max x,y,z accelerometer values
+    public void displayMaxValues() {
+        if (deltaX > deltaXMax) {
+            deltaXMax = deltaX;
+            maxX.setText(Float.toString(deltaXMax));
+        }
+        if (deltaY > deltaYMax) {
+            deltaYMax = deltaY;
+            maxY.setText(Float.toString(deltaYMax));
+        }
+        if (deltaZ > deltaZMax) {
+            deltaZMax = deltaZ;
+            maxZ.setText(Float.toString(deltaZMax));
+        }
+    }
 }

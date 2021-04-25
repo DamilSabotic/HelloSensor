@@ -45,7 +45,8 @@ public class compass extends AppCompatActivity implements SensorEventListener {
     TextView target;
     float currentDegree = 0f;
     ConstraintLayout Layout;
-
+    static final float ALPHA = 0.25f;
+    protected float[] magSensorVals;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,7 +144,8 @@ public class compass extends AppCompatActivity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
 
         // get angle around the z-axis rotated
-        float degree = Math.round(event.values[0]);
+       magSensorVals = lowPass(event.values.clone(), magSensorVals);
+       float degree = Math.round(magSensorVals[0]);
 
 
         DegreeTV.setText("Heading: " + Float.toString(degree) + " degrees");
@@ -166,6 +168,37 @@ public class compass extends AppCompatActivity implements SensorEventListener {
         DegreeStart = -degree;
         buttonPressed(degree);
     }
+
+
+    /**
+     *     @Override
+     *     public void onSensorChanged(SensorEvent event) {
+     *
+     *         // get angle around the z-axis rotated
+     *         float degree = Math.round(event.values[0]);
+     *
+     *
+     *         DegreeTV.setText("Heading: " + Float.toString(degree) + " degrees");
+     *
+     *         // rotation animation - reverse turn degree degrees
+     *         RotateAnimation ra = new RotateAnimation(
+     *                 DegreeStart,
+     *                 -degree,
+     *                 Animation.RELATIVE_TO_SELF, 0.5f,
+     *                 Animation.RELATIVE_TO_SELF, 0.5f);
+     *
+     *         // set the compass animation after the end of the reservation status
+     *         ra.setFillAfter(true);
+     *
+     *         // set how long the animation for the compass image will take place
+     *         ra.setDuration(210);
+     *
+     *         // Start animation of compass image
+     *         compassimage.startAnimation(ra);
+     *         DegreeStart = -degree;
+     *         buttonPressed(degree);
+     *     }
+     **/
 
     public void findDegree(float degree) {
 
@@ -207,7 +240,16 @@ public class compass extends AppCompatActivity implements SensorEventListener {
                 break;
         }
     }
-
+    protected float[] lowPass( float[] input, float[] output ) {
+        if ( output == null ) return input;
+        if(Math.abs(output[0] - input[0]) > 180) { //Necessary to prevent a flips when going from 360 to 0 degrees.
+            return input;
+        }
+        for ( int i=0; i<input.length; i++ ) {
+            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+        }
+        return output;
+    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
