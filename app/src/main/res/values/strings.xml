@@ -35,5 +35,6 @@
     <string name="max_y">Max Y:</string>
     <string name="maximim_x">Max X:</string>
     <string name="maximum_z">Max Z:</string>
+    <string name="kompass">Kompass</string>
 
 </resources>

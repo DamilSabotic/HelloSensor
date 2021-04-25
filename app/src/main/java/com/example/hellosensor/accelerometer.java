@@ -20,6 +20,8 @@ public class accelerometer extends Activity implements SensorEventListener{
     StringBuilder valueX = new StringBuilder();
     StringBuilder valueY = new StringBuilder();
 
+
+
     float [] history = new float[2];
     String [] direction = {"NONE","NONE"};
 
@@ -67,6 +69,7 @@ public class accelerometer extends Activity implements SensorEventListener{
 
         //initialize vibration
         v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+
 
     }
 
@@ -117,11 +120,14 @@ public class accelerometer extends Activity implements SensorEventListener{
         }
 
         valueX.setLength(0);
-        valueX.append("X: ");
+        valueX.append("X:");
         valueX.append(direction[0]);
         valueY.setLength(0);
-        valueY.append("Y : ");
+        valueY.append("Y :");
         valueY.append(direction[1]);
+
+
+
 
         directionX.setText(valueX);
         directionY.setText(valueY);
@@ -148,16 +154,17 @@ public class accelerometer extends Activity implements SensorEventListener{
     }
 
     public void displayCleanValues() {
-        currentX.setText("0.0");
-        currentY.setText("0.0");
-        currentZ.setText("0.0");
+
+        currentX.setText("X: "+"0.0");
+        currentY.setText("Y: "+"0.0");
+        currentZ.setText("Z: "+"0.0");
     }
 
     // display the current x,y,z accelerometer values
     public void displayCurrentValues() {
-        currentX.setText(Float.toString(deltaX));
-        currentY.setText(Float.toString(deltaY));
-        currentZ.setText(Float.toString(deltaZ));
+        currentX.setText("X: "+ Float.toString(deltaX));
+        currentY.setText("Y: "+ Float.toString(deltaY));
+        currentZ.setText("Z: "+ Float.toString(deltaZ));
     }
 
 
